@@ -1,0 +1,27 @@
+/* app global css */
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap");
+.width-100 {
+  width: 100%;
+}
+.card-title {
+  text-transform: uppercase;
+  border-bottom: 1px solid #e2e2e2;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  font-weight: 500;
+  font-size: 15px;
+}
+.condensed-font {
+  font-family: "Roboto Condensed";
+}
+
+.q-page {
+  /* background-color: #fff; */
+  margin: 20px;
+  /* padding: 20px; */
+  height: 100vh;
+}
+.full-height {
+  height: calc(100vh - 200px) !important;
+  overflow: scroll;
+}
