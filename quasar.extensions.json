@@ -1,14 +1,14 @@
 {
   "rasello-user-management": {
     "appName": "RASELLO DEMO PROJECT",
-    "loginRoute": "/v1/user/login",
+    "loginRoute": "/user/login",
     "registerRoute": "v1/user/register",
     "publicRegister": true,
     "logoutRoute": "/v1/user/logout",
     "passwordChangeRoute": "v1/user/password/change",
     "passwordForgotRoute": "/v1/user/password/forgot",
     "passwordResetRoute": "/v1/user/passsword/reset",
-    "fetchUserRoute": "/v1/user/me",
+    "fetchUserRoute": "/auth/me",
     "userVerifyRoute": "/v1/user/verify",
     "refreshTokenRoute": "/v1/user/refreshAccessToken",
     "redirectToAfterLogin": "/dashboard",
