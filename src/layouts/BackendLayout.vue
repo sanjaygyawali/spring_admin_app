@@ -2,7 +2,7 @@
   <q-layout view="lHh lpR fFf">
     <q-header class="bg-white text-primary">
       <q-toolbar class="q-px-md">
-        <q-btn dense flat round icon="menu" @click="miniState = !miniState"/>
+        <q-btn dense flat round icon="menu" @click="miniState = !miniState" />
         <q-toolbar-title>
           <!-- Zanzibar Petroleum -->
         </q-toolbar-title>
@@ -11,7 +11,11 @@
           <q-list>
             <q-item clickable v-close-popup @click="logoutBtnHandler">
               <q-item-section side>
-                <q-icon size="sm" color="secondary" name="las la-sign-out-alt"></q-icon>
+                <q-icon
+                  size="sm"
+                  color="secondary"
+                  name="las la-sign-out-alt"
+                ></q-icon>
               </q-item-section>
               <q-item-section>
                 <q-item-label class="text-uppercase">Logout</q-item-label>
@@ -44,11 +48,11 @@
     >
       <div class="row q-py-sm justify-center">
         <q-avatar style size="md">
-          <img src="https://www.rasello.com/images/rasellologo.png">
+          <img src="https://www.rasello.com/images/rasellologo.png" />
         </q-avatar>
       </div>
       <q-scroll-area class="fit" :visible="false">
-        <Sidebar :schema="schema"/>
+        <Sidebar :schema="schema" />
       </q-scroll-area>
     </q-drawer>
 
@@ -60,38 +64,45 @@
 
 <script>
 import Sidebar from "components/organisms/Sidebar.vue";
-import MenuSchema from "../store/BackendMenu";
+// import MenuSchema from "../store/BackendMenu";
 import { mapState } from "vuex";
 
 export default {
   components: {
-    Sidebar
+    Sidebar,
   },
   data() {
     return {
       left: false,
       drawer: false,
       miniState: false,
-      schema: MenuSchema,
+      schema: {},
       pageTitle: "",
       loading: false,
-      roles: []
+      roles: [],
     };
   },
   created() {
+    this.initLayoutConfig();
     this.assignRoles();
   },
   methods: {
+    async initLayoutConfig() {
+      const uiLayout = await this.$axios.get("a/ui/config");
+      this.schema = uiLayout;
+      // debugger;
+    },
     assignRoles() {
       // TODO: move this role setting to auth middleware
       //  auth middleware needs to be extended from the base plugin.
       let user = this.$store.state.user;
       let roles = user.user.roles;
       let permissions = user.user.permissions;
-      this.$gates.setRoles(roles.map(role => role.name));
-      this.$gates.setPermissions(
-        permissions.map(permission => permission.name)
-      );
+      this.$gates.setRoles(roles.map((role) => role.name));
+
+      // this.$gates.setPermissions(
+      //   permissions.map((permission) => permission.name)
+      // );
     },
     drawerClick(e) {
       if (this.miniState) {
@@ -116,28 +127,28 @@ export default {
     },
     notificationBtnHandler() {
       return;
-    }
+    },
   },
   mounted() {
     this.pageTitle = this.$route.meta.name;
   },
   computed: {
-    ...mapState({ appLoading: state => state.loader.loading }),
+    ...mapState({ appLoading: (state) => state.loader.loading }),
     username() {
       return (
         this.$store.state.user.user.first_name +
         " " +
         this.$store.state.user.user.last_name
       );
-    }
+    },
   },
   watch: {
     $route(to, from) {
       if (this.$route.meta && this.$route.meta.name) {
         this.pageTitle = this.$route.meta.name;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

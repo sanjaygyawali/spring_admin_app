@@ -1,9 +1,36 @@
 <template>
   <q-list class="sidebar">
     <template v-for="item in schema">
+      <q-expansion-item
+        v-if="item.schema.length"
+        :key="item.name"
+        :label="item.name"
+        :group="item.name"
+        :icon="item.icon"
+        :default-opened="false"
+        class="sidebar-expansion-item"
+        active-class="active"
+      >
+        <template v-for="subItem in item.schema">
+          <q-item
+            :header-inset-level="0.5"
+            :key="subItem.name"
+            clickable
+            :to="subItem.url"
+            active-class="active"
+          >
+            <q-item-section avatar v-if="item.icon">
+              <q-icon :name="subItem.icon"></q-icon>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ subItem.name }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-expansion-item>
       <q-item
-        v-if="item.type === 'item' && checkPermission(`menu_read_${item.id}`)"
-        :key="item.label"
+        v-else
+        :key="item.name"
         clickable
         :to="item.url"
         class="sidebar-item"
@@ -13,71 +40,9 @@
           <q-icon :name="item.icon"></q-icon>
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ item.label }}</q-item-label>
+          <q-item-label>{{ item.name }}</q-item-label>
         </q-item-section>
       </q-item>
-
-      <q-expansion-item
-        v-else-if="checkPermission(`menu_read_${item.id}`)"
-        :key="item.label"
-        :label="item.label"
-        :group="item.group"
-        :icon="item.icon"
-        :default-opened="item.opened"
-        class="sidebar-expansion-item"
-        active-class="active"
-      >
-        <template v-for="subItem in item.schema">
-          <q-item
-            v-if="
-              subItem.type == 'item' &&
-                checkPermission(`menu_read_${subItem.id}`)
-            "
-            :header-inset-level="0.5"
-            :key="subItem.label"
-            clickable
-            :to="subItem.url"
-            active-class="active"
-          >
-            <q-item-section avatar v-if="item.icon">
-              <q-icon :name="subItem.icon"></q-icon>
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ subItem.label }}</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-expansion-item
-            v-else-if="checkPermission(`menu_read_${subItem.id}`)"
-            :header-inset-level="0.5"
-            :key="subItem.label"
-            :label="subItem.label"
-            :group="subItem.group"
-            :icon="subItem.icon"
-            :default-opened="subItem.opened || false"
-            class="sidebar-expansion-item"
-            active-class="active"
-          >
-            <template v-for="subItem1 in subItem.schema">
-              <q-item
-                v-if="checkPermission(subItem1.id)"
-                :header-inset-level="1"
-                :key="subItem1.label"
-                clickable
-                :to="subItem1.url"
-                active-class="active"
-              >
-                <q-item-section avatar v-if="item.icon">
-                  <q-icon :name="subItem1.icon"></q-icon>
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>{{ subItem1.label }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-expansion-item>
-        </template>
-      </q-expansion-item>
-      <!-- <q-separator :key="'sb_sep_' + index" /> -->
     </template>
   </q-list>
 </template>
@@ -87,8 +52,8 @@ export default {
   props: {
     schema: {
       type: [Array, Object],
-      required: true
-    }
+      required: true,
+    },
   },
   methods: {
     checkPermission(slug) {
@@ -103,8 +68,8 @@ export default {
       //   return true;
       // }
       // return;
-    }
-  }
+    },
+  },
 };
 </script>
 

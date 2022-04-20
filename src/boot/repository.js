@@ -1,20 +1,20 @@
-export default $axios => resource => ({
+export default ($axios) => (resource) => ({
   index() {
-    return $axios.$get(`/v1/${resource}`);
+    return $axios.$get(`/${resource}/`);
   },
   create(payload) {
-    return $axios.$post(`/v1/${resource}`, payload);
+    return $axios.post(`/${resource}/`, payload);
   },
 
   show(id) {
-    return $axios.$get(`/v1/${resource}/${id}`);
+    return $axios.$get(`/${resource}/${id}/`);
   },
 
   update(payload, id) {
-    return $axios.$put(`/v1/${resource}/${id}`, payload);
+    return $axios.put(`/${resource}/${id}/`, payload);
   },
 
   delete(id) {
-    return $axios.$delete(`/v1/${resource}/${id}`);
-  }
+    return $axios.$delete(`/${resource}/${id}/`);
+  },
 });

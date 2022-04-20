@@ -6,6 +6,7 @@ import resources from "../store/resource";
 
 export default async ({ app, router, store }) => {
   Vue.prototype.$api = {};
+  Vue.prototype.$repo = null;
 
   //   const files = require.context("../api/", true, /\.js$/i);
   //   files.keys().map(key => {
@@ -17,7 +18,8 @@ export default async ({ app, router, store }) => {
   //   });
   Vue.prototype.$user = user(axios);
   const repositoryWithAxios = repository(axios);
-  resources.forEach(element => {
+  Vue.prototype.$repo = repositoryWithAxios;
+  resources.forEach((element) => {
     Vue.prototype.$api[element] = repositoryWithAxios(element);
   });
 };

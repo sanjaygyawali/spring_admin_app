@@ -10,7 +10,7 @@ import store from "../store/index";
 
 // TODO: change super_admin to constant.
 Vue.use(VueGates, {
-  superRole: "super_admin"
+  superRole: "super_admin",
 });
 import {
   QBtn,
@@ -23,9 +23,10 @@ import {
   QTime,
   QFile,
   QToggle,
-  QOptionGroup
+  QOptionGroup,
 } from "quasar";
 import RSelect from "src/components/molecules/RSelect";
+import FormRenderer from "src/components/organisms/FormRenderer";
 
 Vue.prototype.$loader = {
   setLoading: async (val = true) => {
@@ -34,7 +35,7 @@ Vue.prototype.$loader = {
     } else {
       await store.dispatch("loader/removeLoading");
     }
-  }
+  },
 };
 
 Vue.component("QBtn", QBtn);
@@ -55,3 +56,4 @@ Vue.component("title-container", TitleContainer);
 Vue.component("r-select", RSelect);
 Vue.component("r-date-time", RDateTime);
 Vue.component("r-uploader", RUploader);
+Vue.component("form-renderer", FormRenderer);

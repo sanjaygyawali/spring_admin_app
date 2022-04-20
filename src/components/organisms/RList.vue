@@ -58,10 +58,10 @@
           />
           <span v-else-if="props.col.isDate">
             {{
-            formatDate(
-            props.value,
-            props.col.dateMask || "DD/MM/YYYY HH:mm:ss"
-            )
+              formatDate(
+                props.value,
+                props.col.dateMask || "DD/MM/YYYY HH:mm:ss"
+              )
             }}
           </span>
           <span v-else>{{ props.value }}</span>
@@ -79,6 +79,7 @@
               size="sm"
               @click="handleMenuItemClick('edit', row)"
             ></q-btn>
+
             <q-btn-dropdown
               color="primary"
               padding="4px 3px"
@@ -88,11 +89,14 @@
               unelevated
             >
               <q-list>
-                <div v-for="(item, index) in col.actionOptions" :key="'cAction_' + index">
+                <div
+                  v-for="(item, index) in col.actionOptions"
+                  :key="'cAction_' + index"
+                >
                   <q-item
                     v-if="
                       (typeof item.visible == 'boolean' && item.visible) ||
-                        (typeof item.visible == 'function' && item.visible(row))
+                      (typeof item.visible == 'function' && item.visible(row))
                     "
                     clickable
                     v-close-popup
@@ -144,65 +148,65 @@ export default {
   props: {
     schemaColumns: {
       type: [Object, Array],
-      required: true
+      required: true,
     },
     schemaGrid: {
       type: [Object, Array],
-      required: true
+      required: true,
     },
     rows: {
       type: Array,
       default: () => {
         return [];
-      }
+      },
     },
     title: {
       type: String,
-      default: ""
+      default: "",
     },
     flat: {
       type: Boolean,
-      default: true
+      default: true,
     },
     bordered: {
       type: Boolean,
-      default: true
+      default: true,
     },
-    api: {
+    resourceApi: {
       type: String,
-      default: ""
+      default: "",
     },
     loading: {
       type: Boolean,
-      default: false
+      default: false,
     },
     actions: {
       type: Array,
       default: () => {
         return [
           { type: "edit", label: "Edit" },
-          { type: "delete", label: "Delete" }
+          { type: "delete", label: "Delete" },
         ];
-      }
+      },
     },
     slug: {
       type: String,
-      required: true
+      required: true,
     },
     messages: {
       type: Object,
       default: () => {
         return {};
-      }
+      },
     },
     rowsPerPageOptions: {
       type: Array,
-      default: () => [4, 10, 20, 30, 50]
+      default: () => [4, 10, 20, 30, 50],
     },
     defaultFilterInputComponent: {
       type: String,
-      default: "QInput"
-    }
+      default: "QInput",
+    },
   },
   data() {
     return {
@@ -211,11 +215,11 @@ export default {
       listData: [],
       pagination: {
         page: 1,
-        rowsPerPage: 10
+        rowsPerPage: 10,
       },
       filterOptions: {},
       initialFilterOptions: {},
-      formatDate
+      formatDate,
     };
   },
   methods: {
@@ -226,10 +230,10 @@ export default {
     async fetchListData(page = 0, rowsPerPage = 10, type) {
       this.loadingListData = true;
       this.$loader.setLoading();
-      if (this.api) {
+      if (this.listApi) {
         let params = {
           perPage: rowsPerPage,
-          currentPage: page
+          currentPage: page,
         };
 
         if (Object.keys(this.initialFilterOptions).length) {
@@ -239,20 +243,20 @@ export default {
           params.filterParams = this.filterOptions;
         }
         try {
-          const res = await this.$axios.$get(this.api, params);
-          if (res && res.data) {
-            let { results, currentPage, perPage, total } = res.data;
-            this.listData = results;
-            this.pagination.page = currentPage;
-            this.pagination.page++;
-            this.pagination.rowsPerPage = perPage;
-            this.pagination.rowsNumber = total;
-          }
+          const { data, limit, page, totalRecords } = await this.$axios.$get(
+            this.listApi,
+            params
+          );
+          this.listData = data;
+          this.pagination.page = page;
+          this.pagination.page++;
+          this.pagination.rowsPerPage = limit;
+          this.pagination.rowsNumber = totalRecords;
         } catch (err) {
           this.$q.notify({
             type: "negative",
             message: "Error!",
-            caption: err.error.message || "Table data could not be fetched"
+            caption: err.error.message || "Table data could not be fetched",
           });
         } finally {
           this.loadingListData = false;
@@ -282,8 +286,8 @@ export default {
           message: "Are you sure you want to delete?",
           cancel: true,
           ok: {
-            color: "negative"
-          }
+            color: "negative",
+          },
         })
         .onOk(async () => {
           await this.deleteRow(id);
@@ -294,25 +298,25 @@ export default {
       this.processing = true;
       this.$loader.setLoading();
       await this.$axios
-        .delete(`${this.api}/${id}`)
-        .then(res => {
+        .delete(`${this.resourceApi}/${id}`)
+        .then((res) => {
           if (res) {
             this.$q.notify({
               type: "positive",
               message:
                 this.messages.deleteSuccess ||
                 res.message ||
-                "Deleted Successfully"
+                "Deleted Successfully",
             });
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.$q.notify({
             type: "negative",
             message:
               err && err.error
                 ? err.error.message || "Error Occured"
-                : "Cannot Delete"
+                : "Cannot Delete",
           });
         });
       this.processing = false;
@@ -325,7 +329,7 @@ export default {
       const query = this.$route.query;
       let queries = Object.keys(query);
       if (query && queries.length) {
-        queries.forEach(item => {
+        queries.forEach((item) => {
           this.initialFilterOptions[item] = query[item];
         });
       } else {
@@ -337,22 +341,27 @@ export default {
     },
     resetFilter() {
       this.filterOptions = {};
-    }
+    },
   },
   mounted() {
     this.setFilterOptions();
-    if (this.rows.length > 0) {
+    if (this.rows.length > 0 && this.resourceApi != "") {
       this.listData = this.rows;
     } else {
       this.fetchListData();
     }
   },
+  computed: {
+    listApi() {
+      return `${this.resourceApi}/list`;
+    },
+  },
   watch: {
-    "$route.query": async function(newVal) {
+    "$route.query": async function (newVal) {
       this.setFilterOptions();
       this.fetchListData();
-    }
-  }
+    },
+  },
 };
 </script>
 
