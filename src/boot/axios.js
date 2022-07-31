@@ -5,15 +5,15 @@ import { Notify } from "quasar";
 
 const baseURL = process.env.API_URL;
 const instance = axios.create({
-  baseURL
+  baseURL,
 });
 
 const getConfig = () => {
   return {
     headers: {
       "Content-Type": "application/json",
-      Accept: "application/json"
-    }
+      Accept: "application/json",
+    },
   };
 };
 
@@ -25,21 +25,21 @@ function addPendingRequests(cb) {
 }
 
 function onRefreshed() {
-  pendingRequests.map(cb => cb());
+  pendingRequests.map((cb) => cb());
 }
 
 instance.interceptors.response.use(
-  response => {
-    if (!response.data) {
-      // Notify.create({
-      //   type: 'negative',
-      //   message: response.data.message
-      // })
-      throw response;
-    }
+  (response) => {
+    // if (!response.data) {
+    // Notify.create({
+    //   type: 'negative',
+    //   message: response.data.message
+    // })
+    // throw response;
+    // }
     return response;
   },
-  async error => {
+  async (error) => {
     const { config, response } = error;
     console.log("error", { error });
     if (!response) {
@@ -47,9 +47,9 @@ instance.interceptors.response.use(
       return Promise.reject({
         error: {
           message:
-            "Cannot process request at the moment. Please try again later."
+            "Cannot process request at the moment. Please try again later.",
         },
-        ...error
+        ...error,
       });
     }
 
@@ -81,7 +81,7 @@ instance.interceptors.response.use(
         }
       }
 
-      const requestPendingRequest = new Promise(resolve => {
+      const requestPendingRequest = new Promise((resolve) => {
         addPendingRequests(() => {
           resolve(axios(originalRequest));
         });
@@ -98,7 +98,7 @@ instance.interceptors.response.use(
     if (errorData.error && errorData.error.message) {
       Notify.create({
         type: "negative",
-        message: errorData.message || errorData.error
+        message: errorData.message || errorData.error,
       });
     }
     // return response;
@@ -107,42 +107,42 @@ instance.interceptors.response.use(
 );
 
 const axiosApi = {
-  setBaseUrl: function(baseURL) {
+  setBaseUrl: function (baseURL) {
     instance.defaults.baseURL = baseURL;
   },
-  get: async function(target, payload) {
+  get: async function (target, payload) {
     const config = getConfig();
     let result = await instance.get(target, config);
     return result.data;
   },
   // $get to maintain params payload.
-  $get: async function(target, payload) {
+  $get: async function (target, payload) {
     const config = Object.assign(getConfig(), { params: payload });
     let result = await instance.get(target, config);
     return result.data;
   },
-  post: async function(target, payload, options = {}) {
+  post: async function (target, payload, options = {}) {
     const config = getConfig();
     Object.assign(config.headers, options.headers);
     let result = await instance.post(target, payload, config);
     return result.data;
   },
-  put: async function(target, payload, options = {}) {
+  put: async function (target, payload, options = {}) {
     const config = getConfig();
     Object.assign(config.headers, options.headers);
     let result = await instance.put(target, payload, config);
     return result.data;
   },
-  delete: async function(target) {
+  delete: async function (target) {
     return instance.delete(target, getConfig());
   },
-  $delete: async function(target, payload) {
+  $delete: async function (target, payload) {
     const config = Object.assign(getConfig(), { params: payload });
     let result = await instance.delete(target, config);
     return result.data;
   },
   baseURL,
-  instance
+  instance,
 };
 // const app = createApp({})
 // app.config.globalProperties.$axios = instance // vue 3 equivalent to vue.prototype

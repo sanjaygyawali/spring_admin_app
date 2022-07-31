@@ -1,20 +1,20 @@
 export default ($axios) => (resource) => ({
-  index() {
+  async index() {
     return $axios.$get(`/${resource}/`);
   },
-  create(payload) {
+  async create(payload) {
     return $axios.post(`/${resource}/`, payload);
   },
 
-  show(id) {
+  async show(id) {
     return $axios.$get(`/${resource}/${id}/`);
   },
 
-  update(payload, id) {
+  async update(payload, id) {
     return $axios.put(`/${resource}/${id}/`, payload);
   },
 
-  delete(id) {
+  async delete(id) {
     return $axios.$delete(`/${resource}/${id}/`);
   },
 });

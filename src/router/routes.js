@@ -98,7 +98,16 @@ const routes = [
       },
     ],
   },
-
+  {
+    path: "/usertask",
+    component: () => import("layouts/BackendLayout.vue"),
+    children: [
+      {
+        path: "form",
+        component: () => import("pages/usertask/form.vue"),
+      },
+    ],
+  },
   {
     path: "/manage",
     component: () => import("layouts/BackendLayout.vue"),

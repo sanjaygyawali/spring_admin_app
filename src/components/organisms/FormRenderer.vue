@@ -111,16 +111,18 @@ export default {
     externalReset() {
       this.formInstance.resetValue();
     },
-    submitForm() {
+    async submitForm() {
       let resourceUrl = this.resource;
       // if (this.prefix != "") {
       //   resourceUrl = `${this.prefix}/${this.resource}`;
       // }
-      console.log(resourceUrl);
+      // console.log("resource url debug", resourceUrl);
       if (this.mode == "create") {
-        this.$repo(resourceUrl).create(this.formData);
+        await this.$repo(resourceUrl).create(this.formData);
+        this.$emit("complete");
       } else if (this.mode == "edit") {
-        this.$repo(resourceUrl).update(this.formData, this.resourceId);
+        await this.$repo(resourceUrl).update(this.formData, this.resourceId);
+        this.$emit("complete");
       }
     },
   },
